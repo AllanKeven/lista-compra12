@@ -66,3 +66,5 @@ const local = {
     write(BK, items);
   },
 };
+
+export const api = API ? remote : local;

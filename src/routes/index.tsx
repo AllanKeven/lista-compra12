@@ -18,6 +18,21 @@ export const Route = createFileRoute("/")({
 });
 
 const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const CATEGORIES = [
+  "Hortifruti",
+  "Grãos",
+  "Mercearia",
+  "Laticínios",
+  "Padaria",
+  "Carnes",
+  "Frios",
+  "Bebidas",
+  "Congelados",
+  "Limpeza",
+  "Higiene",
+  "Pet",
+  "Outros",
+];
 type Tab = "produtos" | "sacola" | "cadastro";
 
 function App() {
@@ -275,7 +290,20 @@ function Register({ products, onCreate, onDelete }: { products: Product[]; onCre
         }}
       >
         <input className={field} placeholder="Nome do produto" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-        <input className={field} placeholder="Categoria (ex.: Hortifruti)" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+        <select
+          className={`${field} ${form.category ? "" : "text-muted-foreground"}`}
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+        >
+          <option value="" disabled>
+            Selecione a categoria
+          </option>
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
         <div className="flex gap-3">
           <input className={field} type="number" step="0.01" min="0" inputMode="decimal" placeholder="Preço" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <select className={`${field} w-28`} value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}>

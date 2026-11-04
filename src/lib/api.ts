@@ -26,7 +26,27 @@ const read = <T,>(k: string, fallback: T): T => {
 };
 const write = (k: string, v: unknown) => localStorage.setItem(k, JSON.stringify(v));
 
-export const api = {
+// Defina VITE_API_URL (ex.: http://localhost:3333) para usar seu backend.
+const API = import.meta.env["VITE_API_URL"] as string | undefined;
+const http = async <T,>(path: string, init?: RequestInit): Promise<T> => {
+  const r = await fetch(`${API}${path}`, {
+    ...init,
+    headers: { "Content-Type": "application/json", ...init?.headers },
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return (r.status === 204 ? undefined : await r.json()) as T;
+};
+
+const remote = {
+  listProducts: () => http<Product[]>("/products"),
+  createProduct: (p: Omit<Product, "id">) =>
+    http<Product>("/products", { method: "POST", body: JSON.stringify(p) }),
+  deleteProduct: (id: string) => http<void>(`/products/${id}`, { method: "DELETE" }),
+  getBag: () => http<BagItem[]>("/bag"),
+  saveBag: (items: BagItem[]) => http<void>("/bag", { method: "PUT", body: JSON.stringify(items) }),
+};
+
+const local = {
   async listProducts(): Promise<Product[]> {
     return read(PK, seed);
   },
@@ -46,3 +66,5 @@ export const api = {
     write(BK, items);
   },
 };
+
+export const api = API ? remote : local;

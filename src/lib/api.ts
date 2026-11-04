@@ -27,7 +27,7 @@ const read = <T,>(k: string, fallback: T): T => {
 const write = (k: string, v: unknown) => localStorage.setItem(k, JSON.stringify(v));
 
 // Defina VITE_API_URL (ex.: http://localhost:3333) para usar seu backend.
-const API = import.meta.env.VITE_API_URL as string | undefined;
+const API = import.meta.env["VITE_API_URL"] as string | undefined;
 const http = async <T,>(path: string, init?: RequestInit): Promise<T> => {
   const r = await fetch(`${API}${path}`, {
     ...init,
